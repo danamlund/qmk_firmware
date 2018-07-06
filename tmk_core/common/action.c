@@ -690,8 +690,29 @@ void process_action(keyrecord_t *record, action_t action)
 #endif
 }
 
+__attribute__ ((weak))
+/* Called when sending a keycode press. Do not send code if false. */
+bool register_code_kb(uint8_t code) {
+    return register_code_user(code);
+}
 
+__attribute__ ((weak))
+/* Called when sending a keycode press. Do not send code if false. */
+bool register_code_user(uint8_t code) {
+    return true;
+}
 
+__attribute__ ((weak))
+/* Called when sending a keycode release. Do not send code if false. */
+bool unregister_code_kb(uint8_t code) {
+    return unregister_code_user(code);
+}
+
+__attribute__ ((weak))
+/* Called when sending a keycode release. Do not send code if false. */
+bool unregister_code_user(uint8_t code) {
+    return true;
+}
 
 /** \brief Utilities for actions. (FIXME: Needs better description)
  *
@@ -699,6 +720,9 @@ void process_action(keyrecord_t *record, action_t action)
  */
 void register_code(uint8_t code)
 {
+    if (!register_code_kb(code)) {
+        return;
+    }
     if (code == KC_NO) {
         return;
     }
@@ -781,6 +805,9 @@ void register_code(uint8_t code)
  */
 void unregister_code(uint8_t code)
 {
+    if (!unregister_code_kb(code)) {
+        return;
+    }
     if (code == KC_NO) {
         return;
     }
